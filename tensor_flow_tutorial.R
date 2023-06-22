@@ -3,9 +3,26 @@
 
 #Also using scripts and examples from Tensorflow
 # https://tensorflow.rstudio.com/tutorials/quickstart/beginner
+# https://tensorflow.rstudio.com/install/
+
 
 #First time install and load of tensorflow and keras
-tensorflow::install_tensorflow() #requires a fresh R instance. Just restart session if already loaded any packages
+#If running on Windows make sure you're running R as admin
+install.packages("tensorflow") #updated all dependent packages
+library(tensorflow)
+library(reticulate)
+
+#Install Python to configure R for tensorflow
+path_to_python <- install_python()
+virtualenv_create("r-reticulate", python = path_to_python)
+
+#Installing keras with the following lines should also finish installing tensorflow
+#Also installs scipy and tensorflow-datasets - handy!
+install.packages("keras")
+library(keras)
+install_keras(envname = "r-reticulate")
+
+
 
 #This should install keras if it is not already in your installed packages.
 ##otherwise it does nothing.
@@ -23,9 +40,15 @@ c(c(x_train, y_train), c(x_test, y_test)) %>% keras::dataset_mnist()
 x_train <- x_train / 255
 x_test <-  x_test / 255
 
+#Build a machine learning model
+#Build a sequential model by stacking layers.
+model <- keras_model_sequential(input_shape = c(28, 28)) %>% #integer vector of dimensions
+  layer_flatten() %>%
+  layer_dense(128, activation = "relu") %>%
+  layer_dropout(0.2) %>%
+  layer_dense(10)
 
-
-
+#### Notes ####
 # Batch Size- number of samples that go forward and backward through the network
 # epochs is when all the samples in test dataset go forward and backwward through the neural net - usually stochastic
 # latent neurons are the ones compressing the data dimensions are usually 
