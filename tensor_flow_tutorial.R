@@ -86,6 +86,31 @@ loss_fn <- loss_sparse_categorical_crossentropy(from_logits = TRUE)
 
 loss_fn(y_train[1:2], predictions)
 
+model %>% compile(
+  optimizer = "adam",
+  loss = loss_fn,
+  metrics = "accuracy"
+)
+
+#### Training and Evaluation ####
+# Use the fit() method to adjust your model parameters and minimize the loss
+model %>% fit(x_train, y_train, epochs = 5)
+
+#evaluate() checks model performance on a validation or test dataset
+model %>% evaluate(x_test,  y_test, verbose = 2)
+
+#Can also reuse the trained model above to define a new sequential model
+#that uses softmax and argmax to return the class with the highest probability
+probability_model <- keras_model_sequential() %>%
+  model() %>%
+  layer_activation_softmax() %>%
+  layer_lambda(tf$argmax)
+
+probability_model(x_test[1:5, , ])
+
+
+
+
 
 
 
